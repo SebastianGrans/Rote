@@ -152,3 +152,30 @@ def proj_points(p_w, K, T_cw, flip=False):
         p_img = K @ p_cam[:3, :]
     return (p_img/p_img[2, :]).T
 
+def link(uri, label=None, parameters=None):
+    '''
+    Generate a string that is a clickable URI when printed in the terminal. 
+
+    As described by here: 
+    https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
+    
+    Args:
+        uri (string): The URI to be linked to. 
+        label (string): Label of the URI. If no label is give, the URI is used as the label.
+            Default: None. 
+        parameters (string): Not used. For future extendability. Default: None
+
+    Example usage:
+
+        > print(link("http://asdf.com", "click me"))
+        click me # This is a clickable link labeled "click me"
+    '''
+    if label is None: 
+        label = uri
+    if parameters is None: 
+        parameters = ''
+
+    # OSC 8 ; params ; URI ST <name> OSC 8 ;; ST 
+    escape_mask = '\033]8;{};{}\033\\{}\033]8;;\033\\'
+
+    return escape_mask.format(parameters, uri, label)
